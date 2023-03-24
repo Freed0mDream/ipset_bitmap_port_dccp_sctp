@@ -20,7 +20,8 @@
 #define IPSET_TYPE_REV_MIN	0
 /*				1	   Counter support added */
 /*				2	   Comment support added */
-#define IPSET_TYPE_REV_MAX	3	/* skbinfo support added */
+// byd 新增dccp sctp支持
+#define IPSET_TYPE_REV_MAX	5	/* skbinfo support added */
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Jozsef Kadlecsik <kadlec@netfilter.org>");
@@ -117,9 +118,13 @@ ip_set_get_ip_port(const struct sk_buff *skb, u8 pf, bool src, __be16 *port)
 	}
 	if (!ret)
 		return ret;
+
 	switch (proto) {
 	case IPPROTO_TCP:
 	case IPPROTO_UDP:
+	// byd 新增sctp和dccp支持
+	case IPPROTO_SCTP:
+	case IPPROTO_DCCP:
 		return true;
 	default:
 		return false;
