@@ -1,33 +1,43 @@
-# ipset_bitmap_port_dccp_sctp1
+# ipset_bitmap_port_dccp_sctp
 
 #### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+ipset 中 bitmap:port 类型已经支持 tcp 和 udp 等协议，但是未支持不常见的 dccp 和 sctp。
+本次修改新增此类型对于 dccp 和 sctp 的支持以及相关安装、测试说明。
 
 #### 软件架构
-软件架构说明
 
+内核版本：uname -r
+4.18.0-348.el8.x86_64
 
-#### 安装教程
+ipset 版本：
+ipset-7.11
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+#### ipset 安装教程
+
+1. wget https://ipset.netfilter.org/ipset-7.11.tar.bz2
+2. tar -jxvf ipset-7.11.tar.bz2
+3. cd ipset-7.11
+3. ./autogen.sh
+3. ./configure
+4. make && make modules
+
+编译后生成的内核模块目录为：ipset-7.11/kernel/net/netfilter/ 和 ipset-7.11/kernel/net/netfilter/ipset 目录。
 
 #### 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1. 根据 ipset 编译生成后的内核模块，需要覆盖到指定目录。
+2. cp ipset-7.11/kernel/net/netfilter/xt_set.ko /usr/lib/modules/你的内核版本/kernel/net/netfilter/
+3. cp ipset-7.11/kernel/net/netfilter/ipset/*.ko /usr/lib/modules/你的内核版本/kernel/net/netfilter/ipset/
+
+注：如果在测试系统中已有相关的内核模块，需要移除或者删除。
+注：可能需要执行 depmod -a 命令或者 reboot。
+注：目前 7.1 版本和 7.11 版本接口已经有了变化，需要注意修改内容是不同的。
 
 #### 参与贡献
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
-
+1. 我
+2. 你
+3. 他
 
 #### 特技
 
