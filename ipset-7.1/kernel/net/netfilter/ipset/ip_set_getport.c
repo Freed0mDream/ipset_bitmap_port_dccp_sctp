@@ -13,6 +13,7 @@
 #include <linux/icmp.h>
 #include <linux/icmpv6.h>
 #include <linux/sctp.h>
+#include <linux/dccp.h>
 #include <linux/netfilter_ipv6/ip6_tables.h>
 #include <net/ip.h>
 #include <net/ipv6.h>
@@ -53,6 +54,18 @@ get_port(const struct sk_buff *skb, int protocol, unsigned int protooff,
 			return false;
 
 		*port = src ? sh->source : sh->dest;
+		break;
+	}
+	case IPPROTO_DCCP: {
+		struct dccp_hdr _dh;
+		const struct dccp_hdr *dh;
+		
+		dh = skb_header_pointer(skb, protooff, sizeof(_dh), &_dh);
+		if (!dh)
+			/* No choice either */
+			return false;
+		//*port = src ? dh->source : dh->dest;
+		*port = src ? dh->dccph_sport : dh->dccph_dport;
 		break;
 	}
 	case IPPROTO_UDP:
@@ -115,6 +128,7 @@ ip_set_get_ip4_port(const struct sk_buff *skb, bool src,
 		switch (protocol) {
 		case IPPROTO_TCP:
 		case IPPROTO_SCTP:
+		case IPPROTO_DCCP:
 		case IPPROTO_UDP:
 		case IPPROTO_UDPLITE:
 		case IPPROTO_ICMP:

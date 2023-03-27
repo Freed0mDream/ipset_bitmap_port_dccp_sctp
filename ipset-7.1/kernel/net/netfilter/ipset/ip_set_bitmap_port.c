@@ -23,7 +23,7 @@
 #define IPSET_TYPE_REV_MIN	0
 /*				1	   Counter support added */
 /*				2	   Comment support added */
-#define IPSET_TYPE_REV_MAX	3	/* skbinfo support added */
+#define IPSET_TYPE_REV_MAX	5	/* SCTP and DCCP support added */
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>");
@@ -100,6 +100,38 @@ bitmap_port_do_head(struct sk_buff *skb, const struct bitmap_port *map)
 {
 	return nla_put_net16(skb, IPSET_ATTR_PORT, htons(map->first_port)) ||
 	       nla_put_net16(skb, IPSET_ATTR_PORT_TO, htons(map->last_port));
+
+}
+
+static bool
+ip_set_get_ip_port(const struct sk_buff *skb, u8 pf, bool src, __be16 *port)
+{
+	bool ret;
+	u8 proto;
+
+	switch (pf) {
+	case NFPROTO_IPV4:
+		ret = ip_set_get_ip4_port(skb, src, port, &proto);
+		break;
+	case NFPROTO_IPV6:
+		ret = ip_set_get_ip6_port(skb, src, port, &proto);
+		break;
+	default:
+		return false;
+	}
+	if (!ret)
+		return ret;
+
+	switch (proto) {
+	case IPPROTO_TCP:
+	case IPPROTO_UDP:
+	/* 新增sctp和dccp支持*/
+	case IPPROTO_SCTP:
+	case IPPROTO_DCCP:
+		return true;
+	default:
+		return false;
+	}
 }
 
 static int

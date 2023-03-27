@@ -625,6 +625,7 @@ ipset_parse_proto_port(struct ipset_session *session,
 		switch (p) {
 		case IPPROTO_TCP:
 		case IPPROTO_SCTP:
+		case IPPROTO_DCCP:
 		case IPPROTO_UDP:
 		case IPPROTO_UDPLITE:
 			proto = tmp;
